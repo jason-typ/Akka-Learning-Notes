@@ -1,4 +1,10 @@
 # Actor
+<<<<<<< HEAD
+=======
+****
+
+Actor模型是一种并发计算的理论模型，最早在一篇叫做《A Universal Modular Actor Formalism for Artificial Intelligence》的论文中提出。Actor模型中的Actor是一个并发原语，是Actor模型中完成特定工作的一个相对独立的单位(类似于负责某项工作的员工)。
+>>>>>>> commit
 
 一个Actor表示一个工作节点。每个Actor都有一个用来存放其他Actor发过来的消息的地方，类似于一个消息队列，称为邮箱。Actor同步处理邮箱中的消息：从邮箱中取出一条处理一条，处理结束后将处理结果发送给目标Actor(的邮箱)。
 
@@ -9,10 +15,15 @@ Actor模型的另一个好处就是：可以消除共享状态。由于Actor处�
 Actor模型通过监督机制来提供容错性。监督机制是把处理错误的责任交给出错对象以外的实体。在Akka中，父Actor负责监督子Actor。当子Actor出错时，默认的行为是父Actor会负责重启子Actor。
 
 
+## Actor定义与创建
 
+<<<<<<< HEAD
 
 
 ## Actor定义
+=======
+### Actor定义
+>>>>>>> commit
 
 1. 定义一个Actor，需要继承Actor基类：
 
@@ -40,6 +51,8 @@ Actor模型通过监督机制来提供容错性。监督机制是把处理错误
       }
     }
     ```
+
+
 3. 在Actor中可以使用`sender`方法获取发送者的`ActorRef`
 
     ```Scala
@@ -69,6 +82,8 @@ Actor模型通过监督机制来提供容错性。监督机制是把处理错误
   位于Actor层级结构顶端的是路径为`/`的根Actor。然后是路径为`/user`的守护Actor。使用`actorSystem.actorOf()`函数创建的Actor都是守护Actor的子Actor(`/user/yourActor`)。如果在一个Actor内部创建另一个Actor，可以使用`context().actorOf()`函数，来使得新建的Actor来成为当前Actor的子Actor(`/user/yourActor/child`)。
 
   根Actor下面还有其他层级结构，如`/system`下面是与系统操作相关的Actor，`/temp`下面是临时Actor。
+
+### Actor创建
 
 ### 监督
 
@@ -177,3 +192,24 @@ def online: Receive = {
 ###### stash泄露
 
 如果不断地缓存消息，一定会有一个时间，内存耗尽或Actor的邮箱满了。因此，无论何时使用stash，都需要设置一个时间段或最大缓存的消息数目。
+
+
+## Actor特质
+
+`Actor`特质中只有一个abstract方法`receive`，定义了这个Actor的行为。当Actor收到了一个没有匹配到的message，就会调用`unhandled`方法。
+
+```Scala
+def unhandled(message: Any): Unit = {
+    message match {
+      case Terminated(dead) ⇒ throw new DeathPactException(dead)
+      case _                ⇒ context.system.eventStream.publish(UnhandledMessage(message, sender(), self))
+    }
+  }
+```
+
+另外，`Actor`内部还有几个隐式参数：
+
+
+
+1. self，表示当前Actor的ActorRef
+2. context

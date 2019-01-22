@@ -1,4 +1,7 @@
 ## Dispatcher
+***
+> https://github.com/shekhargulati/52-technologies-in-2016/blob/master/41-akka-dispatcher/README.md
+> Akka入门与实践
 
 Future接收一个隐式的ExecutionContext作为参数：
 
@@ -8,8 +11,7 @@ def apply[T](body: =>T)(implicit @deprecatedName('execctx) executor: ExecutionCo
 
 这里的ExecutionContext，我的理解就是计算所需要用到的资源，如线程，或线程池的概念。就像在MR中，任务的定语与计算资源框架的调度，是分离开的。Future的定义中，将计算任务与执行计算任务的资源分离开来：body描述计算任务，但这只是一个对任务的描述，具体怎么执行、何时执行，还是要看executor的调度。
 
-
-Akka中的Dispatcher，继承自`MessageDispatcher`，这个类又实现了特质`ExecutionContextExecutor`。这个特质继承自Java的`java.util.concurrent.Executor`和Scala的`scala.concurrent.ExecutionContext`。所以这个`Dispatcher`可以作为一个`ExecutionContext`被传给Scala中的Future(或作为一个`Executor`传给Java中的Future)。
+Akka中的Dispatcher，继承自`MessageDispatcher`，这个类又实现了特质`ExecutionContextExecutor`。这个特质继承自Java的`java.util.concurrent.Executor`和Scala的`scala.concurrent.ExecutionContext`。这意味着这个`Dispatcher`可以作为一个`ExecutionContext`被传给Scala中的Future(或作为一个`Executor`传给Java中的Future)。
 
 Dispatcher负责在Actor的邮箱中有消息进来时，分配线程给这个Actor。Dispatcher分配的线程，依赖于Executor来提供。Akka创建了一个默认的Dispatcher，由所有的actor共享。用户可以自行创建多个Dispatcher，并分配给不同的Actor。
 
@@ -94,4 +96,6 @@ task-dispatcher {
 }
 ```
 
-Dispatcher的类型，共有四种，默认使用`Dispatcher`。还有`PinnedDispatcher`，`CallingThreadDispatcher`等。
+上面的方法没成功。
+
+Dispatcher的类型，共有三种，默认使用`Dispatcher`。还有`PinnedDispatcher`，`CallingThreadDispatcher`。
